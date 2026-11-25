@@ -6,6 +6,12 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+### Changed
+- **Voice**: the default text-to-speech voice is now Piper's `en_US-hfc_female-medium`
+  (was `en_US-lessac-medium`), with `en_US-hfc_male-medium` as the second choice. Both ship
+  in the image; `server_setup.sh` asks which one on first install (`INTEL_PIPER_VOICE` in
+  `server.env`). The build argument is now `PIPER_VOICES` (a list; the first is the default).
+
 ## [0.1.0] - 2026-11-24
 
 First release.

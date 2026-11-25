@@ -4,7 +4,7 @@ They run when the engines are available, and are skipped otherwise:
 
     INTEL_TEST_ECHO_BIN=build/echo-stream/echo-stream
     INTEL_TEST_MODELS=../echo/models          (ggml-base.en.bin, silero_vad.onnx)
-    INTEL_TEST_PIPER_VOICE=path/to/en_US-lessac-medium.onnx
+    INTEL_TEST_PIPER_VOICE=path/to/en_US-hfc_female-medium.onnx
     INTEL_TEST_WHISPER=path/to/model.bin       (optional; default MODELS/ggml-base.en.bin)
 
 Inside the Docker image all three are set, so `make test-docker` runs them.
