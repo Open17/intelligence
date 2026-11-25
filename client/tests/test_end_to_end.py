@@ -172,7 +172,7 @@ async def test_pi_client_talks_to_the_gateway(pki: Path, unused_tcp_port: int, m
     player.device = device
     runner = asyncio.create_task(device.run_forever())
     try:
-        await wait_for(lambda: device._ws is not None and device.state == "idle")
+        await asyncio.wait_for(device.connected.wait(), 5)
 
         # "Hey Claude, what time is it?" -> reply plays -> follow-up window opens
         mic.say(speech_frames=10, silence_frames=5)
