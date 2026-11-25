@@ -1,0 +1,36 @@
+# --- Secrets: never commit these ----------------------------------------------
+*.env
+!config/*.env.example
+secrets/
+pairing/
+*.pem
+*.key
+*.crt
+wg*.conf
+bundle*.tar.gz*
+
+# --- Python ---------------------------------------------------------------------
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+*.egg-info/
+
+# --- Build output ------------------------------------------------------------------
+build/
+build-*/
+
+# --- Runtime data -------------------------------------------------------------------
+data/
+*.db
+*.db-journal
+
+# --- Editors / OS -----------------------------------------------------------------------
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*~
