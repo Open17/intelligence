@@ -36,7 +36,7 @@ One WebSocket per device: `wss://10.77.0.1:8765`, through WireGuard, mutual TLS 
 device                         server
   │ speech_start, audio… ───────►│
   │ speech_end ─────────────────►│  (silence filler → echo emits the sentence)
-  │◄────────────── earcon ok, state thinking
+  │◄────────────── earcon wake (ok for a follow-up), state thinking
   │◄────────────── state speaking, audio_start{id}
   │◄────────────── audio…  (streams while the model is still writing)
   │◄────────────── audio_end{id}

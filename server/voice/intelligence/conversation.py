@@ -110,7 +110,7 @@ class Conversation:
             await self._send_json("earcon", name="wake")
             await self._open_window()
             return
-        await self._start_turn(request)
+        await self._start_turn(request, woke=wake is not None)
 
     async def on_playback_done(self, stream_id: int) -> None:
         if stream_id == self._playing:
@@ -128,10 +128,11 @@ class Conversation:
             await self._run_turn(event, event_turn=True)
 
     # ---- Turns ---------------------------------------------------------------------------
-    async def _start_turn(self, request: str) -> None:
+    async def _start_turn(self, request: str, *, woke: bool = False) -> None:
         self._close_window()
         self.state = "thinking"
-        await self._send_json("earcon", name="ok")
+        # The wake chime whenever the wake phrase was said; a soft tick for follow-ups.
+        await self._send_json("earcon", name="wake" if woke else "ok")
         await self._send_json("state", state="thinking")
 
         async def run() -> None:
