@@ -43,6 +43,7 @@ class Device:
         self._muted_until = 0.0
         self._ws: ClientConnection | None = None
         self.state = "idle"
+        self.connected = asyncio.Event()  # set while a session is up (after `ready`)
 
     def playback_finished(self, stream_id: int) -> None:
         self._muted_until = time.monotonic() + ECHO_GUARD_SECONDS
@@ -77,11 +78,13 @@ class Device:
                     if ready.get("type") != "ready":
                         raise RuntimeError(f"unexpected reply: {ready}")
                     log.info("connected to %s", self._s.server_url)
+                    self.connected.set()
                     backoff = 1.0
                     await self._session(ws)
             except (OSError, ConnectionClosed, InvalidStatus, asyncio.TimeoutError, RuntimeError) as e:
                 log.warning("connection lost (%s); retrying in %.0f s", e, backoff)
             finally:
+                self.connected.clear()
                 self._ws = None
                 self._gate.reset()
                 self._player.stop()
