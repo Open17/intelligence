@@ -97,7 +97,10 @@ class Conversation:
         elif in_window:
             request = text
         else:
-            log.debug("[%s] ignored speech (no wake phrase)", self.name)
+            if self._s.log_transcripts:
+                log.info("[%s] ignored (no wake phrase): %s", self.name, text)
+            else:
+                log.debug("[%s] ignored speech (no wake phrase)", self.name)
             return
 
         self.last_active = time.monotonic()
