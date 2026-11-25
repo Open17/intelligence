@@ -1,0 +1,10 @@
+# Normalise line endings in the repository, but keep Windows scripts CRLF.
+* text=auto eol=lf
+*.ps1 text eol=crlf
+*.bat text eol=crlf
+
+# Model and audio files are binary.
+*.onnx binary
+*.bin binary
+*.gguf binary
+*.wav binary

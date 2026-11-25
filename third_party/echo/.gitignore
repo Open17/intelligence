@@ -1,0 +1,26 @@
+# --- Build output -----------------------------------------------------------
+build/
+build-*/
+out/
+cmake-build-*/
+CMakeUserPresets.json
+compile_commands.json
+.cache/
+
+# --- Downloaded model files (fetched by scripts/download-models.*) ----------
+models/*
+!models/.gitkeep
+!models/README.md
+
+# --- Editors / OS -------------------------------------------------------------
+.DS_Store
+Thumbs.db
+.idea/
+.vs/
+*.swp
+*~
+
+# --- Generated benchmark audio (scripts/make-benchmark-set.sh) -----------------
+bench/audio/
+bench/manifest.tsv
+bench/results/

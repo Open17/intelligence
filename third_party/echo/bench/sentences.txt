@@ -1,0 +1,22 @@
+# Reference sentences for the accuracy benchmark (one per line, '#' = comment).
+# Numbers are written as words so scoring does not depend on "3" vs "three".
+Turn on the kitchen lights.
+What is the weather going to be like tomorrow morning?
+Remind me to call my mother when I get home.
+Can you send the quarterly report to the whole team before Friday?
+I think we should postpone the meeting until next week.
+How long does it take to drive from Boston to New York?
+Please add eggs, milk and a loaf of bread to my shopping list.
+The new design looks great but the font is a little too small.
+Set a timer for twenty minutes and let me know when it is done.
+Why does the build fail when I compile it on the Raspberry Pi?
+Explain the difference between a mutex and an atomic variable.
+I was thinking we could go hiking in the mountains on Saturday.
+Translate this paragraph into Spanish and keep the formal tone.
+My flight lands at seven so I will be a little late for dinner.
+Could you summarize the main points of the article in three sentences?
+Play some relaxing music in the living room.
+The quick brown fox jumps over the lazy dog.
+Schedule a dentist appointment for Thursday afternoon.
+What are the side effects of taking ibuprofen every day?
+Write a short email thanking Sarah for her help with the project.
