@@ -178,7 +178,7 @@ async def test_pi_client_talks_to_the_gateway(pki: Path, unused_tcp_port: int, m
         mic.say(speech_frames=10, silence_frames=5)
         await wait_for(lambda: device.state == "listening")
         assert brain.heard == ["What time is it?"]
-        assert player.audio > 0 and "ok" in player.earcons
+        assert player.audio > 0 and "wake" in player.earcons
 
         # A follow-up without the wake phrase is answered too.
         mic.say(speech_frames=8, silence_frames=5)
