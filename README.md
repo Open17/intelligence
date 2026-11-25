@@ -92,8 +92,10 @@ sudo ./server_setup.sh set-key           # change the API key
 sudo ./server_setup.sh                   # update after `git pull` (keeps all keys and data)
 ```
 
-Settings (models, effort levels, follow-up window, spending caps per job) are in
+Settings (voice, models, effort levels, follow-up window, spending caps per job) are in
 `/etc/intelligence/server.env`; apply changes with `sudo ./server_setup.sh restart`.
+Setup asks for the voice: `en_US-hfc_female-medium` (the default) or `en_US-hfc_male-medium`;
+both are in the image, so switching `INTEL_PIPER_VOICE` only needs a restart.
 
 On the **Pi**:
 

@@ -120,12 +120,22 @@ configure() {
         ask tz "Your time zone" "$tz"
         endpoint=$(curl -4 -fsS --max-time 5 https://api.ipify.org 2>/dev/null || hostname -I | awk '{print $1}')
         ask endpoint "This server's public IP or hostname (devices connect to it)" "$endpoint"
+        local voice
+        ask voice "Voice: 1 = female, 2 = male" "1"
+        case ${voice,,} in
+            2|m|male)   voice=en_US-hfc_male-medium ;;
+            1|f|female) voice=en_US-hfc_female-medium ;;
+            *) warn "unknown voice '$voice': using the female voice"; voice=en_US-hfc_female-medium ;;
+        esac
         write_file "$ETC/server.env" 644 <<EOF
 # Intelligence server settings. Apply changes with: sudo ./server_setup.sh restart
 INTEL_ASSISTANT_NAME=$name
 INTEL_USER_NAME=$user
 TZ=$tz
 INTEL_PUBLIC_ENDPOINT=$endpoint
+
+# Voice: en_US-hfc_female-medium (default) or en_US-hfc_male-medium
+INTEL_PIPER_VOICE=/opt/voices/$voice.onnx
 
 # Models (see README: "Which model does what")
 INTEL_VOICE_MODEL=claude-haiku-5-5

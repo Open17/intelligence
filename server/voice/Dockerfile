@@ -3,12 +3,14 @@
 #  voice - wake phrase, speech-to-text (echo), Claude (Agent SDK), Piper TTS
 # =============================================================================
 #  Stage 1 builds echo-stream (C++) and downloads the speech models.
-#  Stage 2 builds the Python environment and downloads the Piper voice.
+#  Stage 2 builds the Python environment and downloads the Piper voices.
 #  Stage 3 is the slim runtime: no compilers, non-root, read-only friendly.
 #
 #  Build context: the repository root.
 #    --build-arg WHISPER_MODEL=base.en   (tiny.en | base.en | base.en-q5_1 | small.en-q5_1)
-#    --build-arg PIPER_VOICE=en_US-lessac-medium   (any voice from rhasspy/piper-voices)
+#    --build-arg PIPER_VOICES="en_US-hfc_female-medium en_US-hfc_male-medium"
+#        (any voices from rhasspy/piper-voices; the first is the default, and
+#         INTEL_PIPER_VOICE=/opt/voices/<name>.onnx picks another at runtime)
 # =============================================================================
 
 # ---- 1. echo-stream ------------------------------------------------------------------
@@ -45,10 +47,10 @@ RUN cd third_party/echo && ./scripts/download-models.sh --whisper "$WHISPER_MODE
     # whisper.cpp's sample recording, for the speech-to-text self-test
     && cp /src/build/_deps/whisper-src/samples/jfk.wav /opt/models/jfk.wav
 
-# ---- 2. Python environment + Piper voice -------------------------------------------------------
+# ---- 2. Python environment + Piper voices ------------------------------------------------------
 FROM debian:bookworm-slim AS py-build
 ARG DEBIAN_FRONTEND=noninteractive
-ARG PIPER_VOICE=en_US-lessac-medium
+ARG PIPER_VOICES="en_US-hfc_female-medium en_US-hfc_male-medium"
 RUN apt-get update && apt-get install -y --no-install-recommends \
         python3 python3-venv python3-pip ca-certificates \
     && rm -rf /var/lib/apt/lists/*
@@ -58,9 +60,10 @@ RUN python3 -m venv /opt/voice/venv \
     && /opt/voice/venv/bin/pip install --no-cache-dir --upgrade pip \
     && /opt/voice/venv/bin/pip install --no-cache-dir "/opt/voice/src[dev]"
 RUN mkdir -p /opt/voices \
-    && /opt/voice/venv/bin/python -m piper.download_voices "$PIPER_VOICE" --download-dir /opt/voices \
-    && ln -s "${PIPER_VOICE}.onnx" /opt/voices/voice.onnx \
-    && ln -s "${PIPER_VOICE}.onnx.json" /opt/voices/voice.onnx.json
+    && /opt/voice/venv/bin/python -m piper.download_voices $PIPER_VOICES --download-dir /opt/voices \
+    && set -- $PIPER_VOICES \
+    && ln -s "$1.onnx" /opt/voices/voice.onnx \
+    && ln -s "$1.onnx.json" /opt/voices/voice.onnx.json
 
 # ---- 3. Runtime ----------------------------------------------------------------------------------
 FROM debian:bookworm-slim
