@@ -12,6 +12,11 @@ All notable changes to this project are documented here. The format follows
   in the image; `server_setup.sh` asks which one on first install (`INTEL_PIPER_VOICE` in
   `server.env`). The build argument is now `PIPER_VOICES` (a list; the first is the default).
 
+### Fixed
+- **Pi setup**: `local_setup.sh` stopped silently right after "installed in
+  /opt/intelligence-client" on every fresh install (no saved audio settings yet), so the
+  client service was never created. It now carries on to the speaker/microphone step.
+
 ## [0.1.0] - 2026-11-24
 
 First release.

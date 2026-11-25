@@ -125,7 +125,7 @@ install_app() {
         install -m 400 -o "$RUN_USER" "$WORK/files/device.key" "$ETC/device.key"
         local keep=""
         [[ -f $ETC/client.env ]] && keep=$(grep -E '^INTEL_(INPUT|OUTPUT)_DEVICE|^INTEL_VOLUME' "$ETC/client.env" || true)
-        { cat "$WORK/files/client.env"; [[ -n $keep ]] && echo "$keep"; } \
+        { cat "$WORK/files/client.env"; if [[ -n $keep ]]; then echo "$keep"; fi; } \
             | write_file "$ETC/client.env" 640 "root:$(id -gn "$RUN_USER")"
     fi
     ok "certificates in $ETC (device key readable only by '$RUN_USER')"
