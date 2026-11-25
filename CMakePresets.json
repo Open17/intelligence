@@ -1,0 +1,70 @@
+{
+  "version": 3,
+  "cmakeMinimumRequired": { "major": 3, "minor": 21, "patch": 0 },
+  "configurePresets": [
+    {
+      "name": "default",
+      "displayName": "Release (auto-detect GPU backend)",
+      "description": "Ninja + Release. Metal on macOS, CUDA/Vulkan if found, CPU otherwise.",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/${presetName}",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+    {
+      "name": "debug",
+      "displayName": "Debug",
+      "inherits": "default",
+      "cacheVariables": { "CMAKE_BUILD_TYPE": "Debug" }
+    },
+    {
+      "name": "cpu",
+      "displayName": "Release, CPU only",
+      "inherits": "default",
+      "cacheVariables": { "ECHO_GPU_BACKEND": "none" }
+    },
+    {
+      "name": "cuda",
+      "displayName": "Release, NVIDIA CUDA",
+      "inherits": "default",
+      "cacheVariables": { "ECHO_GPU_BACKEND": "cuda" }
+    },
+    {
+      "name": "vulkan",
+      "displayName": "Release, Vulkan",
+      "inherits": "default",
+      "cacheVariables": { "ECHO_GPU_BACKEND": "vulkan" }
+    },
+    {
+      "name": "rpi5",
+      "displayName": "Raspberry Pi 5 (ARM64, CPU, tuned for the Cortex-A76)",
+      "inherits": "default",
+      "cacheVariables": {
+        "ECHO_GPU_BACKEND": "none",
+        "GGML_NATIVE": "ON"
+      }
+    },
+    {
+      "name": "windows",
+      "displayName": "Windows, Visual Studio 2022 (x64)",
+      "generator": "Visual Studio 17 2022",
+      "architecture": "x64",
+      "binaryDir": "${sourceDir}/build/${presetName}",
+      "condition": { "type": "equals", "lhs": "${hostSystemName}", "rhs": "Windows" }
+    }
+  ],
+  "buildPresets": [
+    { "name": "default", "configurePreset": "default" },
+    { "name": "debug",   "configurePreset": "debug" },
+    { "name": "cpu",     "configurePreset": "cpu" },
+    { "name": "cuda",    "configurePreset": "cuda" },
+    { "name": "vulkan",  "configurePreset": "vulkan" },
+    { "name": "rpi5",    "configurePreset": "rpi5" },
+    { "name": "windows", "configurePreset": "windows", "configuration": "Release" }
+  ],
+  "testPresets": [
+    { "name": "default", "configurePreset": "default", "output": { "outputOnFailure": true } },
+    { "name": "windows", "configurePreset": "windows", "configuration": "Release", "output": { "outputOnFailure": true } }
+  ]
+}
