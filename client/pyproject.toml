@@ -1,0 +1,29 @@
+[project]
+name = "intelligence-client"
+version = "0.1.0"
+description = "Raspberry Pi client: streams your voice to the Intelligence server and plays its replies"
+requires-python = ">=3.11"
+dependencies = [
+    "websockets==17.4",
+    "numpy>=1.26,<3",
+    "sounddevice>=0.5,<0.6",
+    "webrtcvad-wheels>=2.0.14,<3",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "pytest-asyncio>=0.24"]
+
+[project.scripts]
+intelligence-client = "intelligence_client.__main__:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["intelligence_client*"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+testpaths = ["tests"]
