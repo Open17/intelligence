@@ -32,14 +32,14 @@ services:
         WHISPER_MODEL: ${WHISPER_MODEL:-base.en}
         PIPER_VOICE: ${PIPER_VOICE:-en_US-lessac-medium}
     image: intelligence-voice:latest
-    env_file: [/etc/intelligence/server.env]
+    env_file: ["${INTEL_ETC:-/etc/intelligence}/server.env"]
     environment:
       INTEL_TLS_CERT: /run/secrets/server_crt
       INTEL_TLS_KEY: /run/secrets/server_key
       INTEL_TLS_CA: /run/secrets/ca_crt
       INTEL_AGENT_TOKEN_FILE: /run/secrets/agent_token
       INTEL_AGENT_URL: ws://agent:8800
-      HOME: /home/voice
+      HOME: /home/intel
     secrets: [server_crt, server_key, ca_crt, agent_token, anthropic_credential]
     ports:
       - "${INTEL_BIND_IP:-10.77.0.1}:8765:8765"
@@ -48,7 +48,7 @@ services:
     read_only: true
     tmpfs:
       # The Agent SDK keeps chat transcripts under $HOME: in RAM only, gone on restart.
-      - /home/voice:size=128m,mode=0700,uid=1001,gid=1001
+      - /home/intel:size=128m,mode=0700,uid=1001,gid=1001
       - /tmp:size=64m
     mem_limit: ${VOICE_MEM_LIMIT:-4g}
     pids_limit: 512
@@ -61,14 +61,14 @@ services:
       context: ..
       dockerfile: server/agent/Dockerfile
     image: intelligence-agent:latest
-    env_file: [/etc/intelligence/server.env]
+    env_file: ["${INTEL_ETC:-/etc/intelligence}/server.env"]
     environment:
       INTEL_AGENT_TOKEN_FILE: /run/secrets/agent_token
     secrets: [agent_token, anthropic_credential]
     volumes:
       - workspace:/workspace
       - agent-home:/home/agent  # ~/.claude: connector logins, settings, skills
-      - /etc/intelligence/mcp.json:/config/mcp.json:ro
+      - "${INTEL_ETC:-/etc/intelligence}/mcp.json:/config/mcp.json:ro"
     mem_limit: ${AGENT_MEM_LIMIT:-8g}
     pids_limit: 4096
     networks: [backend]
@@ -82,8 +82,8 @@ volumes:
   agent-home: {}
 
 secrets:
-  server_crt: {file: /etc/intelligence/secrets/server.crt}
-  server_key: {file: /etc/intelligence/secrets/server.key}
-  ca_crt: {file: /etc/intelligence/secrets/ca.crt}
-  agent_token: {file: /etc/intelligence/secrets/agent_token}
-  anthropic_credential: {file: /etc/intelligence/secrets/anthropic_credential}
+  server_crt: {file: "${INTEL_ETC:-/etc/intelligence}/secrets/server.crt"}
+  server_key: {file: "${INTEL_ETC:-/etc/intelligence}/secrets/server.key"}
+  ca_crt: {file: "${INTEL_ETC:-/etc/intelligence}/secrets/ca.crt"}
+  agent_token: {file: "${INTEL_ETC:-/etc/intelligence}/secrets/agent_token"}
+  anthropic_credential: {file: "${INTEL_ETC:-/etc/intelligence}/secrets/anthropic_credential"}
