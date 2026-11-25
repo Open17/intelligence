@@ -1,0 +1,10 @@
+{
+  "_comment": "Extra connectors (MCP servers) for Sonnet/Opus. Copy to /etc/intelligence/mcp.json. Servers that need an OAuth login are easier to add with `sudo ./server_setup.sh connect`, which runs Claude Code inside the agent container so you can use /mcp to sign in.",
+  "mcpServers": {
+    "example-remote": {
+      "type": "http",
+      "url": "https://example.com/mcp",
+      "headers": {"Authorization": "Bearer REPLACE_ME"}
+    }
+  }
+}
