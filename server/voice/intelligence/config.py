@@ -68,7 +68,7 @@ class Settings:
     stt_pause_ms: int = 700
 
     # ---- Text-to-speech (Piper) --------------------------------------------------------------
-    piper_voice: str = "/opt/voices/en_US-lessac-medium.onnx"
+    piper_voice: str = "/opt/voices/voice.onnx"  # the image's default voice (en_US-hfc_female-medium)
     tts_length_scale: float = 0.95  # < 1 speaks a little faster
 
     # ---- Conversation behaviour ---------------------------------------------------------------

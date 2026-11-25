@@ -30,7 +30,7 @@ services:
       dockerfile: server/voice/Dockerfile
       args:
         WHISPER_MODEL: ${WHISPER_MODEL:-base.en}
-        PIPER_VOICE: ${PIPER_VOICE:-en_US-lessac-medium}
+        PIPER_VOICES: ${PIPER_VOICES:-en_US-hfc_female-medium en_US-hfc_male-medium}
     image: intelligence-voice:latest
     env_file: ["${INTEL_ETC:-/etc/intelligence}/server.env"]
     environment:
