@@ -11,6 +11,9 @@ All notable changes to this project are documented here. The format follows
   (was `en_US-lessac-medium`), with `en_US-hfc_male-medium` as the second choice. Both ship
   in the image; `server_setup.sh` asks which one on first install (`INTEL_PIPER_VOICE` in
   `server.env`). The build argument is now `PIPER_VOICES` (a list; the first is the default).
+- **Sounds**: the wake chime now plays every time the wake phrase is heard, including in a
+  full sentence ("Hey Claude, what time is it?"), instead of the soft tick. Follow-ups in
+  the 10 s window, without the wake phrase, still get the tick.
 
 ### Fixed
 - **Pi setup**: `local_setup.sh` stopped silently right after "installed in

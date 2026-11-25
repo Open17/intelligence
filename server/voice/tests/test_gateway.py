@@ -167,7 +167,7 @@ async def test_wake_reply_and_followup_window(server, pki) -> None:
         await ws.send(b"SAY:Hey Claude, what time is it?")
         msgs, audio = await recv_until(ws, "audio_end")
         types = [m["type"] for m in msgs]
-        assert types[:2] == ["earcon", "state"] and msgs[0]["name"] == "ok"
+        assert types[:2] == ["earcon", "state"] and msgs[0]["name"] == "wake"
         assert "audio_start" in types and audio
         start = next(m for m in msgs if m["type"] == "audio_start")
         assert start["sample_rate"] == 16000
@@ -180,7 +180,8 @@ async def test_wake_reply_and_followup_window(server, pki) -> None:
         assert msgs[-1]["state"] == "listening"
 
         await ws.send(b"SAY:And in Paris?")  # no wake phrase needed now
-        await recv_until(ws, "audio_end")
+        msgs, _ = await recv_until(ws, "audio_end")
+        assert msgs[0] == {"type": "earcon", "name": "ok"}  # follow-ups get the soft tick
         assert brain.heard[-1] == ("And in Paris?", False)
 
 
