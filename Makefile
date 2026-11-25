@@ -34,7 +34,7 @@ test-deploy:
 
 lint:
 	shellcheck -x -S warning server_setup.sh local_setup.sh deploy/*.sh deploy/lib/*.sh deploy/tests/*.sh
-	-command -v ruff >/dev/null && ruff check server client
+	@if command -v ruff >/dev/null; then ruff check server client; else echo "(ruff not installed: skipping Python lint)"; fi
 
 docker:
 	docker build -f server/voice/Dockerfile -t intelligence-voice:dev .
