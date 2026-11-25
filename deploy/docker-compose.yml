@@ -1,0 +1,89 @@
+# =============================================================================
+#  Intelligence server stack. Started by server_setup.sh; manage it with
+#      sudo ./server_setup.sh status | logs | restart
+#
+#  voice : talks to your devices (port 8765, WireGuard IP only), speech in/out,
+#          Haiku chat, memory. Read-only filesystem, no capabilities.
+#  agent : the sandboxed computer where Sonnet/Opus work. No published
+#          ports; reachable only by `voice`, with a bearer token.
+#
+#  Secrets live in /etc/intelligence/secrets (root:intelligence 0440) and are
+#  mounted per service: the agent never sees the TLS keys, and neither
+#  container gets them through environment variables (no `docker inspect` leaks).
+# =============================================================================
+name: intelligence
+
+x-hardening: &hardening
+  restart: unless-stopped
+  cap_drop: [ALL]
+  security_opt: ["no-new-privileges:true"]
+  group_add: ["${INTEL_GID:-1500}"]
+  logging:
+    driver: json-file
+    options: {max-size: "10m", max-file: "3"}
+
+services:
+  voice:
+    <<: *hardening
+    build:
+      context: ..
+      dockerfile: server/voice/Dockerfile
+      args:
+        WHISPER_MODEL: ${WHISPER_MODEL:-base.en}
+        PIPER_VOICE: ${PIPER_VOICE:-en_US-lessac-medium}
+    image: intelligence-voice:latest
+    env_file: ["${INTEL_ETC:-/etc/intelligence}/server.env"]
+    environment:
+      INTEL_TLS_CERT: /run/secrets/server_crt
+      INTEL_TLS_KEY: /run/secrets/server_key
+      INTEL_TLS_CA: /run/secrets/ca_crt
+      INTEL_AGENT_TOKEN_FILE: /run/secrets/agent_token
+      INTEL_AGENT_URL: ws://agent:8800
+      HOME: /home/intel
+    secrets: [server_crt, server_key, ca_crt, agent_token, anthropic_credential]
+    ports:
+      - "${INTEL_BIND_IP:-10.77.0.1}:8765:8765"
+    volumes:
+      - voice-data:/data
+    read_only: true
+    tmpfs:
+      # The Agent SDK keeps chat transcripts under $HOME: in RAM only, gone on restart.
+      - /home/intel:size=128m,mode=0700,uid=1001,gid=1001
+      - /tmp:size=64m
+    mem_limit: ${VOICE_MEM_LIMIT:-4g}
+    pids_limit: 512
+    networks: [backend]
+    depends_on: [agent]
+
+  agent:
+    <<: *hardening
+    build:
+      context: ..
+      dockerfile: server/agent/Dockerfile
+    image: intelligence-agent:latest
+    env_file: ["${INTEL_ETC:-/etc/intelligence}/server.env"]
+    environment:
+      INTEL_AGENT_TOKEN_FILE: /run/secrets/agent_token
+    secrets: [agent_token, anthropic_credential]
+    volumes:
+      - workspace:/workspace
+      - agent-home:/home/agent  # ~/.claude: connector logins, settings, skills
+      - "${INTEL_ETC:-/etc/intelligence}/mcp.json:/config/mcp.json:ro"
+    mem_limit: ${AGENT_MEM_LIMIT:-8g}
+    pids_limit: 4096
+    networks: [backend]
+
+networks:
+  backend: {}
+
+volumes:
+  voice-data: {}
+  workspace: {}
+  agent-home: {}
+
+secrets:
+  server_crt: {file: "${INTEL_ETC:-/etc/intelligence}/secrets/server.crt"}
+  server_key: {file: "${INTEL_ETC:-/etc/intelligence}/secrets/server.key"}
+  ca_crt: {file: "${INTEL_ETC:-/etc/intelligence}/secrets/ca.crt"}
+  agent_token: {file: "${INTEL_ETC:-/etc/intelligence}/secrets/agent_token"}
+  anthropic_credential: {file: "${INTEL_ETC:-/etc/intelligence}/secrets/anthropic_credential"}

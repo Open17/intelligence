@@ -1,0 +1,14 @@
+# Keep the build context small and secret-free.
+.git
+build
+**/__pycache__
+**/.pytest_cache
+**/.venv
+data
+secrets
+pairing
+*.env
+*.pem
+*.key
+third_party/echo/models/*
+third_party/echo/bench/audio
